@@ -21,7 +21,7 @@ class AgentInstaller:
         self.os_name = platform.system()
         self.agent_dir = Path.home() / "os-health-agent"
         self.service_name = "os-health-agent"
-        self.github_repo = "yourusername/os-health-agent"  # Replace with actual repo
+        self.github_repo = "sumitkpand3y/os-health-agent"  # Replace with actual repo
         
     def install(self):
         """Main installation process"""
