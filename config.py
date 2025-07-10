@@ -11,10 +11,10 @@ class Config:
     VERSION = "1.0.0"
     
     # GitHub repository for updates
-    GITHUB_REPO = "yourusername/os-health-agent"  # Replace with your actual repo
+    GITHUB_REPO = "https://github.com/sumitkpand3y/os-health-agent.git"  # Replace with your actual repo
     
     # Dashboard URL (replace with your actual dashboard URL)
-    DASHBOARD_URL = "https://your-dashboard.herokuapp.com"  # Or your server
+    DASHBOARD_URL = "http://localhost:5050"  # Or your server
     
     # Reporting intervals (in seconds)
     REPORT_INTERVAL = 300  # 5 minutes

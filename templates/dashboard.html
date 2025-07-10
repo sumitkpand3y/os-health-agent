@@ -1,0 +1,47 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OS Health Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { padding: 0.75rem; border: 1px solid #ccc; text-align: left; }
+    th { background-color: #f4f4f4; }
+    .status-online { color: green; }
+    .status-offline { color: red; }
+  </style>
+</head>
+<body>
+  <h1>🩺 OS Health Agent Dashboard</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Agent ID</th>
+        <th>Hostname</th>
+        <th>OS</th>
+        <th>IP</th>
+        <th>Status</th>
+        <th>Health Score</th>
+        <th>Alerts</th>
+        <th>Last Seen</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for agent in agents %}
+      <tr>
+        <td><a href="{{ url_for('agent_details', agent_id=agent.agent_id) }}">{{ agent.agent_id }}</a></td>
+        <td>{{ agent.hostname }}</td>
+        <td>{{ agent.os_info }}</td>
+        <td>{{ agent.local_ip }}</td>
+        <td class="status-{{ agent.status }}">{{ agent.status }}</td>
+        <td>{{ agent.health_score }}</td>
+        <td>{{ agent.alert_count }}</td>
+        <td>{{ agent.last_seen }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Details Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-right: 20px;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        .status-online {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-offline {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #3498db;
+        }
+
+        .info-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .info-card p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alerts-container {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: #fff5f5;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .alert-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .alert-level {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .alert-critical {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .alert-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .alert-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-timestamp {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .alert-message {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-normal {
+            background: #2ecc71;
+        }
+
+        .progress-warning {
+            background: #f39c12;
+        }
+
+        .progress-critical {
+            background: #e74c3c;
+        }
+
+        .disk-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .disk-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+
+        .disk-info {
+            flex: 1;
+        }
+
+        .disk-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .disk-path {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .disk-usage {
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .usage-percent {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .usage-size {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .service-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .service-running {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .service-stopped {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .service-unknown {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .cpu-cores {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .cpu-core {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .core-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+
+        .core-usage {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .health-score {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .health-score h2 {
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .score-value {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🔍 Agent Details</h1>
+            <div class="status-badge status-online">ONLINE</div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>Agent ID</h3>
+                <p>IN-HLA-LP240045-2.local_1AEBEED93BE1</p>
+            </div>
+            <div class="info-card">
+                <h3>Hostname</h3>
+                <p>IN-HLA-LP240045-2.local</p>
+            </div>
+            <div class="info-card">
+                <h3>Operating System</h3>
+                <p>Darwin 24.5.0</p>
+            </div>
+            <div class="info-card">
+                <h3>Last Seen</h3>
+                <p>2025-07-10 11:49:30</p>
+            </div>
+            <div class="info-card">
+                <h3>Uptime</h3>
+                <p>27 days, 1:31:23</p>
+            </div>
+            <div class="info-card">
+                <h3>Architecture</h3>
+                <p>ARM64</p>
+            </div>
+        </div>
+
+        <div class="health-score">
+            <h2>System Health Score</h2>
+            <div class="score-value">0</div>
+            <div class="score-label">Critical Issues Detected</div>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h3>💾 Memory Usage</h3>
+                <div class="metric-value">69.9%</div>
+                <div class="metric-label">7.57 GB of 16.0 GB used</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-warning" style="width: 69.9%"></div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <div class="metric-label">Available: 4.82 GB</div>
+                    <div class="metric-label">Swap: 77.9% (3.12 GB of 4.0 GB)</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>⚡ CPU Usage</h3>
+                <div class="metric-value">1.6%</div>
+                <div class="metric-label">10 cores (4 GHz)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-normal" style="width: 1.6%"></div>
+                </div>
+                <div class="cpu-cores">
+                    <div class="cpu-core">
+                        <div class="core-label">Core 1</div>
+                        <div class="core-usage">6.0%</div>
+                    </div>
+                    <div class="cpu-core">
+                        <div class="core-label">Core 2</div>
+                        <div class="core-usage">4.0%</div>
+                    </div>
+                    <div class="cpu-core">
+                        <div class="core-label">Core 3</div>
+                        <div class="core-usage">2.0%</div>
+                    </div>
+                    <div class="cpu-core">
+                        <div class="core-label">Core 4</div>
+                        <div class="core-usage">2.0%</div>
+                    </div>
+                    <div class="cpu-core">
+                        <div class="core-label">Core 5</div>
+                        <div class="core-usage">0.0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>🌐 Network</h3>
+                <div class="metric-value">Error</div>
+                <div class="metric-label">Local IP: 172.28.25.244</div>
+                <div class="metric-label">Public IP: 14.194.88.70</div>
+                <div style="margin-top: 10px; color: #e74c3c;">
+                    <strong>Network monitoring error detected</strong>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <h3>🔒 Security</h3>
+                <div class="metric-value">Unknown</div>
+                <div class="metric-label">System Integrity: Unknown</div>
+                <div class="metric-label">Software Updates: 0</div>
+                <div class="metric-label">Last Update Check: Not available</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚨 Recent Alerts</h2>
+            <div class="alerts-container">
+                <div class="alert-item">
+                    <div class="alert-level alert-critical">CRITICAL</div>
+                    <div class="alert-content">
+                        <div class="alert-timestamp">2025-07-10 06:19:30</div>
+                        <div class="alert-message">Critical disk usage on CoreSimulator volumes (96.2% - 97.3%)</div>
+                    </div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-level alert-critical">CRITICAL</div>
+                    <div class="alert-content">
+                        <div class="alert-timestamp">2025-07-10 06:19:30</div>
+                        <div class="alert-message">Critical service 'com.apple.loginwindow' is not running</div>
+                    </div>
+                </div>
+                <div class="alert-item">
+                    <div class="alert-level alert-critical">CRITICAL</div>
+                    <div class="alert-content">
+                        <div class="alert-timestamp">2025-07-10 06:19:30</div>
+                        <div class="alert-message">Critical service 'com.apple.WindowServer' is not running</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>💽 Disk Usage</h2>
+            <div class="disk-list">
+                <div class="disk-item">
+                    <div class="disk-info">
+                        <div class="disk-name">Root Volume</div>
+                        <div class="disk-path">/</div>
+                    </div>
+                    <div class="disk-usage">
+                        <div class="usage-percent" style="color: #2ecc71;">2.27%</div>
+                        <div class="usage-size">10.47 GB / 460.43 GB</div>
+                    </div>
+                </div>
+                <div class="disk-item">
+                    <div class="disk-info">
+                        <div class="disk-name">Data Volume</div>
+                        <div class="disk-path">/System/Volumes/Data</div>
+                    </div>
+                    <div class="disk-usage">
+                        <div class="usage-percent" style="color: #f39c12;">63.29%</div>
+                        <div class="usage-size">291.41 GB / 460.43 GB</div>
+                    </div>
+                </div>
+                <div class="disk-item" style="border-left-color: #e74c3c;">
+                    <div class="disk-info">
+                        <div class="disk-name">iOS Simulator</div>
+                        <div class="disk-path">/Library/Developer/CoreSimulator/Volumes/iOS_22C150</div>
+                    </div>
+                    <div class="disk-usage">
+                        <div class="usage-percent" style="color: #e74c3c;">97.25%</div>
+                        <div class="usage-size">17.93 GB / 18.44 GB</div>
+                    </div>
+                </div>
+                <div class="disk-item" style="border-left-color: #e74c3c;">
+                    <div class="disk-info">
+                        <div class="disk-name">xrOS Simulator</div>
+                        <div class="disk-path">/Library/Developer/CoreSimulator/Volumes/xrOS_22N840</div>
+                    </div>
+                    <div class="disk-usage">
+                        <div class="usage-percent" style="color: #e74c3c;">97.27%</div>
+                        <div class="usage-size">16.64 GB / 17.1 GB</div>
+                    </div>
+                </div>
+                <div class="disk-item" style="border-left-color: #e74c3c;">
+                    <div class="disk-info">
+                        <div class="disk-name">watchOS Simulator</div>
+                        <div class="disk-path">/Library/Developer/CoreSimulator/Volumes/watchOS_22S99</div>
+                    </div>
+                    <div class="disk-usage">
+                        <div class="usage-percent" style="color: #e74c3c;">96.94%</div>
+                        <div class="usage-size">9.95 GB / 10.27 GB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Critical Services</h2>
+            <div class="alerts-container">
+                <div class="service-item">
+                    <div class="service-status service-unknown">UNKNOWN</div>
+                    <div>
+                        <div style="font-weight: bold; color: #2c3e50;">com.apple.loginwindow</div>
+                        <div style="font-size: 0.9rem; color: #7f8c8d;">Login window service</div>
+                    </div>
+                </div>
+                <div class="service-item">
+                    <div class="service-status service-unknown">UNKNOWN</div>
+                    <div>
+                        <div style="font-weight: bold; color: #2c3e50;">com.apple.WindowServer</div>
+                        <div style="font-size: 0.9rem; color: #7f8c8d;">Window server service</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
